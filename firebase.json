@@ -1,0 +1,23 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ], "rewrites": [ 
+      {
+        "source": "/testSdk", 
+        "function": "testSdk"
+      },
+      {
+        "source": "/testCases", 
+        "function": "testCases"
+      },
+      {
+        "source": "/registration", 
+        "function": "registration"
+      } 
+    ]
+  }
+}
