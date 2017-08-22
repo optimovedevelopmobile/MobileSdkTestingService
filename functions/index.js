@@ -1,10 +1,9 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const mySql = require('mysql');
 const testManager = require('./testManager').testManager;
+const registrationManager = require('./registrationManager').registrationManager;
 const pushDispatcher = require('./pushDispatcher').pushDispatcher;
 const gcpKey = require('./.gcpKey.json');
-
 
 // admin.initializeApp(functions.config().firebase);
 admin.initializeApp({
@@ -13,6 +12,7 @@ admin.initializeApp({
 });
 const db = admin.database();
 testManager.init(db);
+registrationManager.init(db);
 
 const appNames = {
 	1: "Full",
@@ -37,32 +37,16 @@ exports.testCases = functions.https.onRequest((req, res) => {
 	}
 });
 
-exports.piwikDemo = functions.https.onRequest((req, res) => {
-
-	function queryDb() {
-		let sql = "SELECT *, hex(idvisitor) FROM piwik_log_link_visit_action ORDER BY idlink_va DESC LIMIT 1";
-		mySqlConnector.query(sql, function(error, result) {
-			if (error) {
-				console.error(error);
-				res.send("query error!");
-			} else {
-				res.json(result);
-			}
-		});
-	}
-
-	const mySqlConnector = mySql.createConnection(functions.config().piwikdb);
-
-	mySqlConnector.connect(function(error){
-		if (error) {
-			res.json(Object.assign(error, { whatHappened:'connection error!'}));
-		} else {
-			queryDb();
-		}
-	});
-});
-
 //Testing Functions
+
+exports.testDbConnection = functions.https.onRequest((req, res) => {
+  return admin.database().ref().once('value')
+  .then(function(snapshot) {
+      res.json(snapshot);
+  }).catch(function(error) {
+      res.json(error);
+  });
+});
 
 exports.testSdk = functions.https.onRequest((req, res) => {
 
@@ -90,7 +74,6 @@ exports.testSdk = functions.https.onRequest((req, res) => {
 			status: "pending",
 			appName: appNames[tenantId]
 		}, function(error) {
-			console.log("basdubasduibasudasudygasuydgasuydgausydguy");
 			if (error) {
 				console.error("Failed to create new test node at firebase");
 				res.status(500).send('Internal Server Error');
@@ -150,27 +133,18 @@ exports.testSdk = functions.https.onRequest((req, res) => {
 
 exports.registration = functions.https.onRequest((req, res) => {
 
-	let tenantId = req.body.tenantId;
-	let deviceId = req.body.deviceId;
-	let osVersion = req.body.osVersion;
-	let token = req.body.token;
-	let publicCustomerId = req.body.publicCustomerId;
-	let isCustomer = req.body.isCustomer;
-	let email = req.body.email;
-
-	let customer = {
-		androidTokens: {
-			deviceId: deviceId,
-			osVersion: osVersion,
-			token: token
-		},
-		info: {
-			email: email,
-			tenantId: tenantId,
-			publicCustomerId: publicCustomerId,
-			isCustomer: isCustomer
-		}
-	}
-
-	res.json(customer);
+  registrationManager.registerNewDevice({
+    tenantId: req.body.tenantId,
+    deviceId: req.body.deviceId,
+    osVersion: req.body.osVersion,
+    fcmToken: req.body.fcmToken,
+    publicCustomerId: req.body.publicCustomerId,
+    isCustomer: req.body.isCustomer,
+    optIn: req.body.optIn,
+    os: req.body.osName
+  }).then(function(status) {
+    res.json(status);
+  }).catch(function(error) {
+    res.json(error);
+  });
 });

@@ -47,7 +47,7 @@ function reportTestStep(stepData) {
   let stepMessage = stepData.stepMessage;
 
   console.log(stepData);
-  let currentStepRef = firebaseDb.ref(`${sourceOs}/${testId}/steps/${stepSource}-${stepPhase}`);
+  let currentStepRef = firebaseDb.ref(`tests/${sourceOs}/${testId}/steps/${stepSource}-${stepPhase}`);
   let stepValue = {
     timestamp: timestamp
   };
@@ -72,10 +72,10 @@ function reportTestStep(stepData) {
 function reportTestManagerTestStep(stepPhase, stepData) {
 
   return reportTestStep({
-      stepSource: "test-manager",
+      stepSource: "manager",
       stepPhase: stepPhase,
       testId: stepData.testId,
-      testCaseName: stepData.testCase.name,
+      testCaseName: stepData.testCaseName,
       timestamp: Math.floor(Date.now()),
       sourceOs: stepData.sourceOs
   });
@@ -84,7 +84,7 @@ function reportTestManagerTestStep(stepPhase, stepData) {
 function reportValidatorTestStep(stepPhase, stepData) {
 
   return reportTestStep({
-      stepSource: "test-validator",
+      stepSource: "validator",
       stepPhase: stepPhase,
       testId: stepData.testId,
       testCaseName: stepData.testCaseName,
