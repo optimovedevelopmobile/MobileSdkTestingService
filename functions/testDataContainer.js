@@ -28,11 +28,23 @@ const optitrackTestCases = {
 
 const optipushTestCases = {
   pushCampaignUserOpened: {
+    description: 'Sending an OptiPush campaign message that the client opens',
     name: 'pushCampaignUserOpened',
     components: ['OptiPush']
   },
   pushCampaignUserDismissed: {
+    description: 'Sending an OptiPush campaign message that the client dismisses',
     name: 'pushCampaignUserDismissed',
+    components: ['OptiPush']
+  },
+  newDeviceIsRegisteredWithOptIn: {
+    description: 'A new device is registered and is optted-in to OptiPush messages',
+    name: 'newDeviceIsRegisteredWithOptIn',
+    components: ['OptiPush']
+  },
+  newDeviceIsRegisteredWithOptOut: {
+    description: 'A new device is registered and is optted-out to OptiPush messages',
+    name: 'newDeviceIsRegisteredWithOptOut',
     components: ['OptiPush']
   }
 };

@@ -18,7 +18,8 @@ const appNames = {
 	1: "Full",
 	2: "NoFirebase",
 	3: "OptiTrack",
-	4: "OptiPush"
+	4: "OptiPush",
+  5: "SDKDevelopmentProject"
 };
 
 //Get Information Functions
@@ -64,6 +65,7 @@ exports.testSdk = functions.https.onRequest((req, res) => {
 		let testCase = testManager.testCases.allFlat[req.body.testCase];
 		let tenantId = req.body.tenantId;
 		let sourceOs = req.body.sourceOs;
+    let testParams = req.body.testParams;
 
 		let testRef = db.ref(sourceOs).push();
 		let testId = testRef.key;
@@ -85,7 +87,7 @@ exports.testSdk = functions.https.onRequest((req, res) => {
 				sourceOs: sourceOs
 			})
 			.then(function() {
-				let payload = testManager.generateStartTestPayload(testCase, testId);
+				let payload = testManager.generateStartTestPayload(testCase, testId, testParams);
 				sendStartTestPushMessage(payload);
 			})
 			.catch(function(error) {

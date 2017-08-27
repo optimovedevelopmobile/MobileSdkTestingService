@@ -3,7 +3,7 @@ const testDataContainer = require('./testDataContainer');
 const testCases = testDataContainer.testCases;
 var firebaseDb;
 
-function generateStartTestPayload(testCase, testId) {
+function generateStartTestPayload(testCase, testId, testParams) {
 
   function generatePayloadForPushCampaign() {
     return {
@@ -21,9 +21,7 @@ function generateStartTestPayload(testCase, testId) {
       testData: {
         testId: testId,
         testName: caseName,
-        parameters: {
-          userId: "FirstTestEver"
-        }
+        parameters: testParams
       }
     };
   }
